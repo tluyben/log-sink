@@ -23,10 +23,9 @@ const ContentDisplay: React.FC<ContentDisplayProps> = ({ content }) => {
         (trimmed.startsWith('[') && trimmed.endsWith(']'))) {
       try {
         JSON.parse(trimmed);
-        console.log('Detected JSON content:', trimmed.substring(0, 100) + '...');
         return 'json';
       } catch (e) {
-        console.log('Failed to parse as JSON:', e, trimmed.substring(0, 100) + '...');
+        //console.log('Failed to parse as JSON:', e, trimmed.substring(0, 100) + '...');
       }
     }
     
