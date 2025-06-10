@@ -24,13 +24,26 @@ const LogPage: React.FC = () => {
       const response = await fetch(`/${uuid}/bearer`, {
         method: 'POST',
       });
+      
+      if (response.status === 403) {
+        console.log('Bearer generation forbidden - database already exists');
+        setIsOwner(false);
+        return;
+      }
+      
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}`);
+      }
+      
       const data = await response.json();
+      console.log('Generated bearer successfully');
       
       setBearer(data.bearer);
       setIsOwner(true);
       localStorage.setItem(`bearer_${uuid}`, data.bearer);
     } catch (error) {
       console.error('Error generating bearer:', error);
+      setIsOwner(false);
     }
   }, [uuid]);
 
@@ -49,24 +62,71 @@ const LogPage: React.FC = () => {
   useEffect(() => {
     if (!uuid) return;
 
-    // Check if user is owner
-    const storedBearer = localStorage.getItem(`bearer_${uuid}`);
-    if (storedBearer) {
-      setBearer(storedBearer);
-      setIsOwner(true);
-    } else {
-      // Generate new bearer for owner
-      generateBearer();
-    }
+    let interval: NodeJS.Timeout;
 
-    // Load initial content
-    loadContent();
+    const initializePage = async () => {
+      // Check page status first
+      const storedBearer = localStorage.getItem(`bearer_${uuid}`);
+      
+      try {
+        const headers: HeadersInit = {};
+        if (storedBearer) {
+          headers['Authorization'] = `Bearer ${storedBearer}`;
+        }
+        
+        const statusResponse = await fetch(`/${uuid}/status`, { headers });
+        const status = await statusResponse.json();
+        
+        console.log('Status check result:', status);
+        console.log('Stored bearer exists:', !!storedBearer);
+        
+        if (status.exists) {
+          // Database exists - only show bearer if user has valid one in localStorage
+          console.log('Database exists, checking ownership...');
+          if (storedBearer && status.isOwner) {
+            console.log('User is valid owner');
+            setBearer(storedBearer);
+            setIsOwner(true);
+          } else {
+            // User is not owner or doesn't have valid bearer
+            console.log('User is NOT owner - no bearer access');
+            setIsOwner(false);
+            setBearer('');
+          }
+        } else {
+          // Database doesn't exist - this user is the owner, generate bearer
+          console.log('Database does not exist, user will be owner');
+          if (storedBearer) {
+            // User already has a bearer in localStorage
+            console.log('Using existing bearer from localStorage');
+            setBearer(storedBearer);
+            setIsOwner(true);
+          } else {
+            // Generate new bearer for first-time owner
+            console.log('Generating new bearer for first-time owner');
+            await generateBearer();
+          }
+        }
+      } catch (error) {
+        console.error('Error checking page status:', error);
+        setIsOwner(false);
+      }
+      
+      // Load initial content
+      loadContent();
 
-    // Setup polling for new content
-    setIsPolling(true);
-    const interval = setInterval(loadContent, 2000);
+      // Setup polling for new content
+      setIsPolling(true);
+      interval = setInterval(loadContent, 2000);
+    };
+
+    initializePage();
+
+    // Cleanup function
     return () => {
-      clearInterval(interval);
+      if (interval) {
+        clearInterval(interval);
+      }
       setIsPolling(false);
     };
   }, [uuid, generateBearer, loadContent]);
@@ -142,7 +202,11 @@ const LogPage: React.FC = () => {
       <div className="content-area">
         {logs.length === 0 ? (
           <div className="empty-state">
-            No logs yet. Send a POST request to this endpoint with your bearer token.
+            {isOwner ? (
+              "No logs yet. Send a POST request to this endpoint with your bearer token."
+            ) : (
+              "This log page exists but you don't have access to post to it. Only the original creator can post content here."
+            )}
           </div>
         ) : (
           logs.map((log) => (

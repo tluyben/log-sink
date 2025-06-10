@@ -60,12 +60,40 @@ function isValidUUID(uuid) {
     return uuidRegex.test(uuid);
 }
 
-// Generate bearer token for UUID owner
+// Check if UUID database exists and validate bearer ownership
+app.get('/:uuid/status', (req, res) => {
+    const { uuid } = req.params;
+    if (!isValidUUID(uuid)) {
+        return res.status(400).json({ error: 'Invalid UUID format' });
+    }
+    
+    const dbPath = path.join(dbsDir, `${uuid}.db`);
+    const exists = fs.existsSync(dbPath);
+    
+    // If bearer is provided, validate it
+    const bearer = req.headers.authorization?.replace('Bearer ', '') || req.headers.authorization;
+    const isOwner = bearer ? validateBearer(bearer, uuid) : false;
+    
+    res.json({ 
+        exists, 
+        isOwner,
+        canGenerateBearer: !exists 
+    });
+});
+
+// Generate bearer token for UUID owner (only if database doesn't exist)
 app.post('/:uuid/bearer', (req, res) => {
     const { uuid } = req.params;
     if (!isValidUUID(uuid)) {
         return res.status(400).json({ error: 'Invalid UUID format' });
     }
+    
+    // Check if database already exists - if so, deny bearer generation
+    const dbPath = path.join(dbsDir, `${uuid}.db`);
+    if (fs.existsSync(dbPath)) {
+        return res.status(403).json({ error: 'Bearer token can only be generated for new UUIDs' });
+    }
+    
     const bearer = crypto.AES.encrypt(uuid, SECRET_KEY).toString();
     res.json({ bearer });
 });
