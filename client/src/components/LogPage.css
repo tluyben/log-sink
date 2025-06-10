@@ -1,0 +1,289 @@
+.log-page {
+  min-height: 100vh;
+  background-color: #f5f5f5;
+}
+
+.top-bar {
+  position: sticky;
+  top: 0;
+  background: white;
+  border-bottom: 1px solid #ddd;
+  padding: 10px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 100;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.url-section {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.url {
+  font-family: monospace;
+  font-size: 14px;
+  color: #333;
+  background: #f8f8f8;
+  padding: 5px 10px;
+  border-radius: 4px;
+  border: 1px solid #ddd;
+}
+
+.owner-section {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.bearer-label {
+  font-size: 12px;
+  color: #666;
+}
+
+.bearer {
+  font-family: monospace;
+  font-size: 12px;
+  color: #333;
+  background: #ffe6e6;
+  padding: 3px 6px;
+  border-radius: 3px;
+  border: 1px solid #ffcccc;
+}
+
+.copy-btn, .delete-btn {
+  background: none;
+  border: 1px solid #ddd;
+  padding: 5px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.copy-btn:hover {
+  background: #f0f0f0;
+}
+
+.delete-btn:hover {
+  background: #ffe6e6;
+}
+
+.spinner-section {
+  min-width: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.polling-indicator {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #e8f5e8;
+  padding: 4px 8px;
+  border-radius: 12px;
+  border: 1px solid #c3e6c3;
+}
+
+.spinner {
+  animation: spin 2s linear infinite;
+  font-size: 14px;
+  display: inline-block;
+}
+
+.polling-text {
+  font-size: 12px;
+  color: #2d5a2d;
+  font-weight: 500;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.content-area {
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.empty-state {
+  text-align: center;
+  color: #666;
+  font-style: italic;
+  padding: 40px;
+  background: white;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+}
+
+.log-entry {
+  background: white;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  margin-bottom: 20px;
+  overflow: hidden;
+}
+
+.log-header {
+  background: #f8f8f8;
+  padding: 10px 15px;
+  border-bottom: 1px solid #ddd;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.log-id {
+  font-weight: bold;
+  color: #666;
+  font-size: 14px;
+}
+
+.log-time {
+  font-size: 12px;
+  color: #888;
+}
+
+.content-display {
+  padding: 15px;
+}
+
+.content-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.content-type-badge {
+  background: #007acc;
+  color: white;
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-size: 11px;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.mode-toggle {
+  background: #f0f0f0;
+  border: 1px solid #ddd;
+  padding: 4px 8px;
+  border-radius: 3px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.mode-toggle:hover {
+  background: #e0e0e0;
+}
+
+.content-text pre {
+  background: #f8f8f8;
+  padding: 15px;
+  border-radius: 4px;
+  overflow-x: auto;
+  white-space: pre-wrap;
+  font-family: 'Courier New', monospace;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.json-tree {
+  font-family: 'Courier New', monospace;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.json-toggle {
+  cursor: pointer;
+  user-select: none;
+  color: #666;
+}
+
+.json-toggle:hover {
+  color: #333;
+}
+
+.json-content {
+  margin-top: 5px;
+}
+
+.json-item {
+  margin: 2px 0;
+}
+
+.json-key {
+  color: #d73a49;
+  margin-right: 8px;
+}
+
+.json-string {
+  color: #032f62;
+}
+
+.json-number {
+  color: #005cc5;
+}
+
+.json-boolean {
+  color: #d73a49;
+}
+
+.json-null {
+  color: #6f42c1;
+}
+
+.json-object, .json-array {
+  margin: 2px 0;
+}
+
+.html-rendered {
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 15px;
+  background: white;
+}
+
+.content-markdown {
+  background: #f8f8f8;
+  padding: 15px;
+  border-radius: 4px;
+}
+
+.content-markdown h1,
+.content-markdown h2,
+.content-markdown h3,
+.content-markdown h4,
+.content-markdown h5,
+.content-markdown h6 {
+  margin-top: 0;
+  margin-bottom: 10px;
+}
+
+.content-markdown p {
+  margin-bottom: 10px;
+}
+
+.content-markdown code {
+  background: #e1e4e8;
+  padding: 2px 4px;
+  border-radius: 3px;
+  font-family: 'Courier New', monospace;
+}
+
+.content-markdown pre {
+  background: #f6f8fa;
+  padding: 10px;
+  border-radius: 4px;
+  overflow-x: auto;
+}
+
+.content-markdown pre code {
+  background: none;
+  padding: 0;
+}
